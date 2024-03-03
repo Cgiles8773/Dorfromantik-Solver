@@ -4,8 +4,7 @@
 ///
 /// I, Collin Giles, certify that I wrote this code from scratch and
 /// did not copy it in part or whole from another source.  All 
-/// references used in the completion of the assignments are cited 
-/// in my README file.
+/// references used are cited in my README file.
 ///
 /// File Contents
 ///
@@ -26,7 +25,7 @@
 /// elements in a group need to be adjacent to be considered a group - meaning the groups are transitive
 /// </example>
 /// </summary>
-namespace TileClass
+namespace Solver
 {
     /// <summary>
     /// The tile class representing a hexagon with six typed edges, and a sub-tile.

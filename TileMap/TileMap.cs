@@ -1,6 +1,7 @@
-﻿namespace TileMap
+﻿namespace Solver
 {
-    public class Class1
+
+    public class TileMap
     {
 
     }

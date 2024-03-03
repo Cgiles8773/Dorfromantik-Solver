@@ -4,8 +4,7 @@
 ///
 /// I, Collin Giles, certify that I wrote this code from scratch and
 /// did not copy it in part or whole from another source.  All 
-/// references used in the completion of the assignments are cited 
-/// in my README file.
+/// references used are cited in my README file.
 ///
 /// File Contents
 ///
@@ -13,14 +12,18 @@
 /// Note that the only valid types are defined as follows:
 /// Plain, forest, house, field, river, track, station
 /// </summary>
-namespace TileClass
+namespace Solver
 {
     /// <summary>
     /// The section class is used to help organize the information of each edge/sub-tile in a tile
-    /// This class has two fields
+    /// <para>
+    /// This class has two fields:
+    /// <para>
     /// Type - A string representing the type of the section
-    /// Types are limited to the following strings 
+    /// Types are limited to the following strings: Plain, forest, house, field, river, water, track, and station.
+    /// </para>
     /// Count - An int representing the count of elements in a section i.e. how many trees are in a forest type section?
+    /// </para>
     /// </summary>
     public class Section
     {
@@ -42,21 +45,25 @@ namespace TileClass
         }
         /// <summary>
         /// Creates a section with a typing, and count 0
+        /// <para>
         /// Note that the only valid types are defined as follows:
         /// Plain, forest, house, field, river, track, station
+        /// </para>
         /// </summary>
-        /// <param name="Typing"></param>
+        /// <param name="Typing">The type of this section</param>
         public Section(string Typing) : this()
         {
             SetType(Typing);
         }
         /// <summary>
         /// Creates a section with a typing, and a count
+        /// <para>
         /// Note that the only valid types are defined as follows:
         /// Plain, forest, house, field, river, track, station
+        /// </para>
         /// </summary>
-        /// <param name="Type"></param>
-        /// <param name="Count"></param>
+        /// <param name="Typing">The type of this section</param>
+        /// <param name="Count">The count of elements for the type</param>
         public Section(string Typing, int Count) : this()
         {
             SetType(Typing);
@@ -64,8 +71,10 @@ namespace TileClass
         }
         /// <summary>
         /// Sets the typing of this section. Note that the only valid types are defined as follows:
+        /// <para>
+        /// Note that the only valid types are defined as follows:
         /// Plain, forest, house, field, river, track, station
-        /// The string will be normalized to be all caps
+        /// </para>
         /// </summary>
         /// <param name="SectionType">The type of this section</param>
         public void SetType(string SectionType)

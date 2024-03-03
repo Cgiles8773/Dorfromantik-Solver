@@ -7,7 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tile", "Tile\Tile.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TileMap", "TileMap\TileMap.csproj", "{AF440879-BDDF-4395-8736-2399A59F4448}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TileTester", "TileTester\TileTester.csproj", "{A7A9C72F-DDE9-4619-9F5A-50BD69D8DBA3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TileTester", "TileTester\TileTester.csproj", "{A7A9C72F-DDE9-4619-9F5A-50BD69D8DBA3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EC294E7D-1816-4B37-8F11-DB01ADB0A1BF}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

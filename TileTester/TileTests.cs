@@ -1,4 +1,5 @@
-using TileClass;
+using Solver;
+using System.Diagnostics;
 
 namespace TileTester
 {
@@ -79,6 +80,14 @@ namespace TileTester
             Section section = new Section();
             section.SetCount(10);
             Assert.IsTrue(section.Count.Equals(10));
+        }
+        [TestMethod]
+        public void Test()
+        {
+            for(int i = 1; i < 7; i++) 
+            {
+                Debug.WriteLine(i + ", " + (i + 3) % 6);
+            }
         }
     }
 }
