@@ -16,16 +16,20 @@ by Toukana Interactive, by recreating it in C#.
 
 # Time Expenditures
 ## Tile
-<para>
-Time Estimate: 3 hours		Time Spent: Around 4 hours. (Note the estimate because I forgot to track time spent at this point in the project.)
-</para>
+Time Estimate: 3 hours.<break>
+
+Time Spent: Around 4 hours. (Note the estimate because I forgot to track time spent at this point in the project.)
 
 ## TileMap
-
+<para>
+Time Estimate: 8 hours
+</para>
 
 # References
 <list>
-https://learn.microsoft.com
-https://www.w3schools.com/cs/cs_switch.php
-https://dorfromantik.fandom.com/wiki/Dorfromantik
+https://learn.microsoft.com - Used 
+https://www.w3schools.com/cs/cs_switch.php - Refresher
+https://dorfromantik.fandom.com/wiki/Dorfromantik - Used to formalize the rules of the game and tile structure
+https://www.redblobgames.com/grids/hexagons/ - Used to help design the TileMap
+https://www.redblobgames.com/grids/hexagons/implementation.html - Used to help design the TileMap
 </list>
