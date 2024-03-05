@@ -25,41 +25,62 @@ namespace Solver
     public class TileMap
     {
         /// <summary>
-        /// Used to keep track of the q,r,s coordinates 
+        /// The TileMap is organized into a collection of Coordinates, used to determine position, and Tiles, which contain information about groups,
+        /// section types, etc.
         /// </summary>
-        private class Coordinate
-        {
-            public int q;
-            public int r;
-            public int s;
-            /// <summary>
-            /// Creates a Coordinate with a q,r,s value. 
-            /// See CoordinatesExample.png for a visual.
-            /// </summary>
-            /// <param name="q">The horizontal coordinate, decreases left, increases right</param>
-            /// <param name="r">One of the diagonal coordinates. Increases up to the right, and decreases down to the left</param>
-            /// <param name="s">One of the diagonal coordinates. Increases up to the left, and decreases down to the right</param>
-            public Coordinate(int q, int r, int s)
-            {
-                this.q = q;
-                this.r = r;
-                this.s = s;
-            }
-            /// <summary>
-            /// Creates a Coordinate with a q,r,s value of 0,0,0. 
-            /// See CoordinatesExample.png for a visual.
-            /// </summary>
-            public Coordinate()
-            {
-                this.q = 0;
-                this.r = 0;
-                this.s = 0;
-            }
-        }
-        private Dictionary<Coordinate, Tile> HexGrid;
+        private Dictionary<Coordinate, Tile> TileGrid;
         public TileMap()
         {
-            HexGrid = new Dictionary<Coordinate, Tile>();
+            TileGrid = new Dictionary<Coordinate, Tile>();
+        }
+        /// <summary>
+        /// A list of the six transformations used to move over one hexagon in any direction.
+        /// The directions are ordered as follows: The top edge is associated with 1, and going clockwise, each edge is numbered 1-6.
+        /// </summary>
+        private static List<Coordinate> Coord_Directions = new List<Coordinate>
+        {
+            new Coordinate(0, -1, 1), new Coordinate(1, -1, 0), new Coordinate(1, 0, -1),
+            new Coordinate(0, 1, -1), new Coordinate(-1, 1, 0), new Coordinate(-1, 0, 1)
+        };
+        /// <summary>
+        /// Gets the directional vector for a given direction. Note that the top edge is associates with 1, and going clockwise, 
+        /// each edge is numbered 1-6.
+        /// <example>
+        /// Say you wanted to get the directional coordinates for the tile directly below 0,0,0. This would be done by writing CoordinateDirection(4),
+        /// which would return a Coordinate with the values (0,1,-1), which defines the transformation necessary to arrive at the desired tile.
+        /// </example>
+        /// </summary>
+        /// <param name="direction">A number 1-6</param>
+        /// <returns>The directional vector for a given direction.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">If the given number is not in the range 1-6</exception>
+        public static Coordinate CoordinateDirection(int direction)
+        {
+            if (direction < 1 || direction >= 7)
+                throw new ArgumentOutOfRangeException(nameof(direction), "Direction must be between 1 and 6");
+            return Coord_Directions[direction - 1];
+        }
+        /// <summary>
+        /// Returns the coordinates of a neighboring tile in a given direction 1-6.
+        /// </summary>
+        /// <param name="coord"></param>
+        /// <param name="direction"></param>
+        /// <returns></returns>
+        public static Coordinate Neighbor(Coordinate coord, int direction)
+        {
+            return Coordinate.Add(coord, CoordinateDirection(direction));
+        }
+        /// <summary>
+        /// Gets the neighboring tile of "home" in a given direction. Note that the top edge of a tile is associated with 1, and going clockwise,
+        /// each edge is numbered 1-6.
+        /// </summary>
+        /// <param name="home">The starting tile</param>
+        /// <param name="direction">The direction to travel in</param>
+        /// <returns>The neighboring tile, if it exists.</returns>
+        public Tile? GetNeighboringTile(Coordinate home, int direction)
+        {
+            Tile? neighbor;
+            TileGrid.TryGetValue(Neighbor(home, direction), out neighbor);
+            return neighbor;
         }
     }
 }
