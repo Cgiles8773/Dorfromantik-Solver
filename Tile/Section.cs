@@ -36,7 +36,7 @@ namespace Solver
         /// </summary>
         public string Typing { get; private set; }
         /// <summary>
-        /// Creates a section with no typing and count 0
+        /// Creates a section with no typing (Typing of "" to be exact) and count 0
         /// </summary>
         public Section()
         {

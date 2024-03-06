@@ -6,6 +6,9 @@ namespace TileTester
     [TestClass]
     public class TileTests
     {
+        /// <summary>
+        /// The Section category tests the constructor for the Section class
+        /// </summary>
         [TestMethod, TestCategory("Section")]
         public void TestSectionConstructor()
         {
@@ -14,7 +17,7 @@ namespace TileTester
             Assert.IsTrue(section.Count.Equals(0));
         }
         [TestMethod, TestCategory("Section")]
-        public void TestSectionConstructor2() 
+        public void TestSectionConstructor2()
         {
             Section section = new Section("Plain");
             Assert.IsTrue(section.Typing.Equals("PLAIN"));
@@ -81,12 +84,115 @@ namespace TileTester
             section.SetCount(10);
             Assert.IsTrue(section.Count.Equals(10));
         }
-        [TestMethod]
-        public void Test()
+        /// <summary>
+        /// The list constructor requires 7 sections
+        /// </summary>
+        [TestMethod, TestCategory("Constructor")]
+        public void TestListConstructorThrowsTooMany()
         {
-            for(int i = 1; i < 7; i++) 
+            List<Section> sections =
+            [
+                new Section(),
+                new Section(),
+                new Section(),
+                new Section(),
+                new Section(),
+                new Section(),
+                new Section(),
+                new Section() ///Eighth element
+            ];
+            Assert.ThrowsException<ArgumentException>(()=>new Tile(sections));
+        }
+        /// <summary>
+        /// The list constructor requires 7 sections
+        /// </summary>
+        [TestMethod, TestCategory("Constructor")]
+        public void TestListConstructorThrowsTooFew()
+        {
+            List<Section> sections =
+            [
+                new Section(),
+                new Section()
+            ];
+            Assert.ThrowsException<ArgumentException>(() => new Tile(sections));
+        }
+        /// <summary>
+        /// The subtile constructor only assigns the subtile
+        /// </summary>
+        [TestMethod, TestCategory("Constructor")]
+        public void TestSubtileConstructor()
+        {
+            Tile Tile = new Tile("House", 4);
+            Assert.IsTrue(Tile.Subtile.Typing.Equals("HOUSE"));
+            Assert.AreEqual(Tile.Subtile.Count, 4);
+            List<Section> list = (List<Section>)Tile.ToList();
+            for (int i = 1; i < 7; i++)
             {
-                Debug.WriteLine(i + ", " + (i + 3) % 6);
+                Assert.IsTrue(list[i].Typing.Equals(""));
+            }
+        }
+        /// <summary>
+        /// An empty tile returns an empty list
+        /// </summary>
+        [TestMethod, TestCategory("ToList")]
+        public void TestEmptyToList()
+        {
+            Tile Tile = new Tile();
+            foreach (Section segment in Tile.ToList())
+            {
+                Assert.AreEqual(0, segment.Count);
+                Assert.IsTrue(segment.Typing.Equals(""));
+            }
+        }
+        /// <summary>
+        /// A partial tile returns a partially full list
+        /// </summary>
+        [TestMethod, TestCategory("ToList")]
+        public void TestPartialToList()
+        {
+            List<Section> sections =
+            [
+                new Section("Forest"),
+                new Section("Forest"),
+                new Section(),
+                new Section(),
+                new Section("Forest"),
+                new Section(),
+                new Section(),
+            ];
+            Tile Tile = new Tile(sections);
+            List<Section> list = (List<Section>)Tile.ToList();
+            Assert.AreEqual(7, list.Count);
+            Assert.IsTrue(list.ElementAt(0).Typing.Equals("FOREST"));
+            Assert.IsTrue(list.ElementAt(1).Typing.Equals("FOREST"));
+            Assert.IsTrue(list.ElementAt(2).Typing.Equals(""));
+            Assert.IsTrue(list.ElementAt(3).Typing.Equals(""));
+            Assert.IsTrue(list.ElementAt(4).Typing.Equals("FOREST"));
+            Assert.IsTrue(list.ElementAt(5).Typing.Equals(""));
+            Assert.IsTrue(list.ElementAt(6).Typing.Equals(""));
+        }
+        /// <summary>
+        /// A full tile returns a full list
+        /// </summary>
+        [TestMethod, TestCategory("ToList")]
+        public void TestToList()
+        {
+            List<Section> sections =
+            [
+                new Section("Forest"),
+                new Section("Forest"),
+                new Section("Forest"),
+                new Section("Forest"),
+                new Section("Forest"),
+                new Section("Forest"),
+                new Section("Forest"),
+            ];
+            Tile Tile = new Tile(sections);
+            List<Section> list = (List<Section>)Tile.ToList();
+            Assert.AreEqual(7, list.Count);
+            foreach ( var section in sections ) 
+            {
+                Assert.IsTrue(section.Typing.Equals("FOREST"));
             }
         }
     }

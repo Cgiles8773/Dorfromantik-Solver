@@ -1,4 +1,6 @@
-﻿/// <summary>
+﻿using System.Collections;
+
+/// <summary>
 /// Author:    Collin Giles
 /// Date:      3/2/24
 ///
@@ -29,6 +31,7 @@ namespace Solver
 {
     /// <summary>
     /// The tile class representing a hexagon with six typed edges, and a sub-tile.
+    /// An empty tile is not considered null, but is considered to have a type of "", and a count of 0.
     /// </summary>
     public class Tile
     {
@@ -43,7 +46,7 @@ namespace Solver
         public Section Edge6 { get; private set; }
         public Section Subtile { get; private set; }
         /// <summary>
-        /// Creates a new Tile without any typing
+        /// Creates a new Tile without any typing, or count
         /// </summary>
         public Tile()
         {
@@ -56,13 +59,33 @@ namespace Solver
             Subtile = new Section();
         }
         /// <summary>
-        /// Creates a sub-tile with a given sub-tile.
+        /// Creates a Tile with a given sub-tile and count.
         /// </summary>
         /// <param name="Subtile">The type of the sub-tile</param>
         /// <param name="count">The count of the element</param>
         public Tile(string SubtileType, int count) : this()
         {
             this.Subtile = new Section(SubtileType, count);
+        }
+        /// <summary>
+        /// Creates a tile with the given sections. The first index should be the subtile, and then the next six should be sections 1-6.
+        /// <requires>The IEnumerable contains no more and no less than seven sections.</requires>
+        /// </summary>
+        /// <param name="Sections">The sections to assign to this tile</param>
+        public Tile(IEnumerable<Section> Sections)
+        {
+            if (Sections.Count() != 7)
+            { throw new ArgumentException("The required amount of given sections is seven!"); }
+            else
+            {
+                Subtile = Sections.ElementAt(0);
+                Edge1 = Sections.ElementAt(1);
+                Edge2 = Sections.ElementAt(2);
+                Edge3 = Sections.ElementAt(3);
+                Edge4 = Sections.ElementAt(4);
+                Edge5 = Sections.ElementAt(5);
+                Edge6 = Sections.ElementAt(6);
+            }
         }
         /// <summary>
         /// Sets the edge numbered 1-6, to the type, and sets its elements count to the given count
@@ -85,7 +108,7 @@ namespace Solver
             }
         }
         /// <summary>
-        /// Sets the subtile type, and the count of elements
+        /// Sets the sub-tile type, and the count of elements
         /// </summary>
         /// <param name="Subtile">The type of the sub-tile</param>
         /// <param name="count">The count of the element</param>
@@ -112,6 +135,25 @@ namespace Solver
             }
         }
         /// <summary>
+        /// Returns a list representing this tile object. The list is 7 indexes in length, with the sub-tile being index 0.
+        /// Edge1 is index 1, Edge2 is index 2, and so on.
+        /// </summary>
+        /// <returns>A list containing all sections of this tile</returns>
+        public IEnumerable ToList()
+        {
+            List<Section> Sections =
+            [
+                Subtile,
+                Edge1,
+                Edge2,
+                Edge3,
+                Edge4,
+                Edge5,
+                Edge6,
+            ];
+            return Sections;
+        }
+        /// <summary>
         /// An access override that allows quick retrieval of an edge in a tile, if the edge exists
         /// </summary>
         /// <param name="edge">The number of the edge to get</param>
@@ -120,6 +162,23 @@ namespace Solver
         {
             get { return GetEdge(edge); }
             private set { }
+        }
+        /// <summary>
+        /// Returns a set of lists, which contains the sections in this tile that connect to each other. In order for sections to be considered
+        /// connected, they must be adjacent within the same tile, or have an adjacent section with a matching type
+        /// <example>Looking at the TileStructure, if section 1 and 4 are both forests, they can only be
+        /// connected if the sub-tile type is also a forest</example>
+        /// <example>If section1 was a forest, and section 2 was a forest, then 1 and 2 would be connected. Additionally, if the sub-tile
+        /// was also a forest, then 1, 2, and the sub-tile would be connected</example>
+        /// </summary>
+        /// <returns>A set of lists of connected sub-tiles.</returns>
+        public IEnumerable<IEnumerable<Section>> GetConnections()
+        {
+
+            ///First, with the subtile, check its type, and check any edges for a matching type.
+            ///If the type matches, add it to the group. Else, put it back into the ungrouped tiles.
+            ///Then for each edge, check its neighbors 
+            return null;
         }
     }
 }
