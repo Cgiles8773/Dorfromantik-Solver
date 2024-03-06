@@ -195,5 +195,198 @@ namespace TileTester
                 Assert.IsTrue(section.Typing.Equals("FOREST"));
             }
         }
+        [TestMethod, TestCategory("CalculateNeighbors")]
+        public void CalculateRightNeighbors()
+        {
+            Tile tile = new Tile();
+            int[] neighbor = new int[6];
+            for (int i = 0; i < 6; i++)
+            {
+                //For the values 1-6, calculate their neighbors and store them in the array
+                neighbor[i] = tile.CalculateRightNeighbor(i+1);
+            }
+            Assert.AreEqual(neighbor[0], 2); //1 -> 2
+            Assert.AreEqual(neighbor[1], 3); //2 -> 3
+            Assert.AreEqual(neighbor[2], 4); //3 -> 4
+            Assert.AreEqual(neighbor[3], 5); //4 -> 5
+            Assert.AreEqual(neighbor[4], 6); //5 -> 6
+            Assert.AreEqual(neighbor[5], 1); //6 -> 1
+        }
+        [TestMethod, TestCategory("CalculateNeighbors")]
+        public void CalculateLeftNeighbors()
+        {
+            Tile tile = new Tile();
+            int[] neighbor = new int[6];
+            for (int i = 0; i < 6; i++)
+            {
+                //For the values 1-6, calculate their neighbors and store them in the array
+                neighbor[i] = tile.CalculateLeftNeighbor(i + 1);
+            }
+            Assert.AreEqual(neighbor[0], 6); //1 -> 6
+            Assert.AreEqual(neighbor[1], 1); //2 -> 1
+            Assert.AreEqual(neighbor[2], 2); //3 -> 2
+            Assert.AreEqual(neighbor[3], 3); //4 -> 3
+            Assert.AreEqual(neighbor[4], 4); //5 -> 4
+            Assert.AreEqual(neighbor[5], 5); //6 -> 5
+        }
+        [TestMethod, TestCategory("Grouping")]
+        public void TestNoGroupTile()
+        {
+            List<Section> sections =
+            [
+                new Section("Forest"),
+                new Section("House"),
+                new Section("Plain"),
+                new Section("Field"),
+                new Section("Track"),
+                new Section("River"),
+                new Section("Water"),
+            ];
+            Tile Tile = new Tile(sections);
+            IEnumerable < IEnumerable < Section >> Groups = Tile.GetGroups();
+            Assert.IsTrue(Groups.Count() == 7);
+            foreach (var grouping in Groups)
+            {
+                Assert.IsTrue(grouping.Count() == 1);
+            }
+        }
+        [TestMethod, TestCategory("Grouping")]
+        public void TestFullGroupTile()
+        {
+            List<Section> sections =
+            [
+                new Section("Forest"),
+                new Section("Forest"),
+                new Section("Forest"),
+                new Section("Forest"),
+                new Section("Forest"),
+                new Section("Forest"),
+                new Section("Forest"),
+            ];
+            Tile Tile = new Tile(sections);
+            IEnumerable<IEnumerable<Section>> Groups = Tile.GetGroups();
+            Assert.IsTrue(Groups.Count() == 1);
+            foreach (var grouping in Groups)
+            {
+                Assert.IsTrue(grouping.Count() == 7);
+                foreach (var section in grouping)
+                {
+                    if (sections.Contains(section))
+                    {
+                        sections.Remove(section);
+                    }
+                }
+            }
+            Assert.IsFalse(sections.Any());
+        }
+        [TestMethod, TestCategory("Grouping")]
+        public void TestRingGroupTile()
+        {
+            List<Section> sections =
+                [
+                new Section("Plain",0),
+                new Section("Forest",1),
+                new Section("Forest",2),
+                new Section("Forest",3),
+                new Section("Forest",4),
+                new Section("Forest",5),
+                new Section("Forest",6),
+            ];
+            Tile Tile = new Tile(sections);
+            IEnumerable<IEnumerable<Section>> Groups = Tile.GetGroups();
+            Assert.IsTrue(Groups.Count() == 2);
+            Assert.IsTrue(Groups.ElementAt(0).Count() == 1);
+            Assert.IsTrue(Groups.ElementAt(1).Count() == 6);
+            foreach (var grouping in Groups) 
+            {
+                foreach (var section in grouping)
+                {
+                    if (sections.Contains(section))
+                    {
+                        sections.Remove(section);
+                    }
+                }
+            }
+            Assert.IsFalse(sections.Any());
+        }
+        [TestMethod, TestCategory("Grouping")]
+        public void TestHalfGroupTile()
+        {
+            List<Section> sections =
+            [
+                new Section("Plain",0),
+                new Section("Plain",1),
+                new Section("Plain",2),
+                new Section("Plain",3),
+                new Section("Forest",4),
+                new Section("Forest",5),
+                new Section("Forest",6),
+            ];
+            Tile Tile = new Tile(sections);
+            IEnumerable<IEnumerable<Section>> Groups = Tile.GetGroups();
+            Assert.IsTrue(Groups.Count() == 2);
+            Assert.IsTrue(Groups.ElementAt(0).Count() == 4);
+            Assert.AreEqual(Groups.ElementAt(0).ElementAt(0).Typing, "PLAIN");
+            Assert.AreEqual(Groups.ElementAt(1).ElementAt(0).Typing, "FOREST");
+            Assert.IsTrue(Groups.ElementAt(1).Count() == 3);
+            foreach (var grouping in Groups)
+            {
+                foreach (var section in grouping)
+                {
+                    if (sections.Contains(section))
+                    {
+                        sections.Remove(section);
+                    }
+                }
+            }
+            Assert.IsFalse(sections.Any());
+        }
+        [TestMethod, TestCategory("Grouping")]
+        public void TestMiscGroupTile()
+        {
+            List<Section> sections =
+            [
+                new Section("River",0),
+                new Section("House",1),
+                new Section("River",2),
+                new Section("Field",3),
+                new Section("Plain",4),
+                new Section("River",5),
+                new Section("House",6),
+            ];
+            Tile Tile = new Tile(sections);
+            IEnumerable<IEnumerable<Section>> Groups = Tile.GetGroups();
+            Assert.AreEqual(Groups.Count(), 4);
+            foreach (var grouping in Groups)
+            {
+                if (grouping.ElementAt(0).Typing.Equals("RIVER"))
+                {
+                    Assert.AreEqual(grouping.Count(), 3);
+                }
+                if (grouping.ElementAt(0).Typing.Equals("HOUSE"))
+                {
+                    Assert.AreEqual(grouping.Count(), 2);
+                }
+                if (grouping.ElementAt(0).Typing.Equals("FIELD"))
+                {
+                    Assert.AreEqual(grouping.Count(), 1);
+                }
+                if (grouping.ElementAt(0).Typing.Equals("PLAIN"))
+                {
+                    Assert.AreEqual(grouping.Count(), 1);
+                }
+            }
+            foreach (var grouping in Groups)
+            {
+                foreach (var section in grouping)
+                {
+                    if (sections.Contains(section))
+                    {
+                        sections.Remove(section);
+                    }
+                }
+            }
+            Assert.IsFalse(sections.Any());
+        }
     }
 }

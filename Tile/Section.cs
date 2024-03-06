@@ -47,7 +47,7 @@ namespace Solver
         /// Creates a section with a typing, and count 0
         /// <para>
         /// Note that the only valid types are defined as follows:
-        /// Plain, forest, house, field, river, track, station
+        /// Plain, forest, house, field, river, water, track, station
         /// </para>
         /// </summary>
         /// <param name="Typing">The type of this section</param>
@@ -59,7 +59,7 @@ namespace Solver
         /// Creates a section with a typing, and a count
         /// <para>
         /// Note that the only valid types are defined as follows:
-        /// Plain, forest, house, field, river, track, station
+        /// Plain, forest, house, field, river, water, track, station
         /// </para>
         /// </summary>
         /// <param name="Typing">The type of this section</param>
@@ -73,7 +73,7 @@ namespace Solver
         /// Sets the typing of this section. Note that the only valid types are defined as follows:
         /// <para>
         /// Note that the only valid types are defined as follows:
-        /// Plain, forest, house, field, river, track, station
+        /// Plain, forest, house, field, river, water, track, station
         /// </para>
         /// </summary>
         /// <param name="SectionType">The type of this section</param>
@@ -87,6 +87,7 @@ namespace Solver
                 case "HOUSE":
                 case "FIELD":
                 case "RIVER":
+                case "WATER":
                 case "TRACK":
                 case "STATION":
                     Typing = SectionType;

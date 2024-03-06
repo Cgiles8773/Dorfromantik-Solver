@@ -121,7 +121,8 @@ namespace Solver
         /// </summary>
         /// <param name="edge">The number of the edge to get</param>
         /// <returns>The edge corresponding to the given number</returns>
-        public Section? GetEdge(int edge)
+        /// <exception cref="IndexOutOfRangeException">If the index is not in the range 1-6</exception>
+        public Section GetEdge(int edge)
         {
             switch (edge)
             {
@@ -131,7 +132,7 @@ namespace Solver
                 case 4: return this.Edge4;
                 case 5: return this.Edge5;
                 case 6: return this.Edge6;
-                default: return null;
+                default: throw new IndexOutOfRangeException();
             }
         }
         /// <summary>
@@ -154,31 +155,132 @@ namespace Solver
             return Sections;
         }
         /// <summary>
-        /// An access override that allows quick retrieval of an edge in a tile, if the edge exists
+        /// An access override that allows quick retrieval of an edge in a tile, if the edge exists.
+        /// Note that the edges are indexed 1-6, not 0-5. Refer to the example picture for more info.
+        /// If an edge is retrieved that is outside of these indexes, an IndexOutOfRangeException may be thrown
         /// </summary>
         /// <param name="edge">The number of the edge to get</param>
         /// <returns>The edge corresponding to the given number</returns>
-        public Section? this[int edge]
+        /// <exception cref="IndexOutOfRangeException">If the index is not in the range 1-6</exception>
+        public Section this[int edge]
         {
             get { return GetEdge(edge); }
             private set { }
         }
         /// <summary>
-        /// Returns a set of lists, which contains the sections in this tile that connect to each other. In order for sections to be considered
-        /// connected, they must be adjacent within the same tile, or have an adjacent section with a matching type
+        /// Returns a set of groupings, which contains the sections in this tile that are grouped with each other. 
+        /// In order for sections to be considered grouped, they must be adjacent within the same tile, 
+        /// or have an adjacent section with a matching type.
+        /// Note that each section of this Tile is in at most one group, so no section will be absent from the set of groups.
         /// <example>Looking at the TileStructure, if section 1 and 4 are both forests, they can only be
         /// connected if the sub-tile type is also a forest</example>
         /// <example>If section1 was a forest, and section 2 was a forest, then 1 and 2 would be connected. Additionally, if the sub-tile
         /// was also a forest, then 1, 2, and the sub-tile would be connected</example>
         /// </summary>
         /// <returns>A set of lists of connected sub-tiles.</returns>
-        public IEnumerable<IEnumerable<Section>> GetConnections()
+        public IEnumerable<IEnumerable<Section>> GetGroups()
         {
-
-            ///First, with the subtile, check its type, and check any edges for a matching type.
-            ///If the type matches, add it to the group. Else, put it back into the ungrouped tiles.
-            ///Then for each edge, check its neighbors 
-            return null;
+            List<List<Section>> SetOfGroups = new List<List<Section>>();
+            // Captures the subtile grouping of the tile
+            List<Section> SubtileGroup = new List<Section> { Subtile };
+            // Used to keep track of ungrouped/unvisted edges
+            List<int> Ungrouped = new List<int> { 1,2,3,4,5,6 };
+            // Do the subtile grouping first to reduce the complexity of the remaining groups.
+            for (int i = 1; i <= 6; i++)
+            {
+                if (this[i].Typing.Equals(Subtile.Typing))
+                {
+                    Ungrouped.Remove(i);
+                    SubtileGroup.Add(this[i]);
+                }
+            }
+            SetOfGroups.Add(SubtileGroup);
+            while (Ungrouped.Any())
+            {
+                int i = Ungrouped.ElementAt(0);
+                Ungrouped.Remove(i);
+                Section Current = this[i];
+                List<Section> CurrentGroup = new List<Section> { Current };
+                GroupLeftNeighbor(i, CurrentGroup, Ungrouped);
+                GroupRightNeighbor(i, CurrentGroup, Ungrouped);
+                SetOfGroups.Add(CurrentGroup);
+            }
+            /**
+            foreach (int i in Ungrouped)
+            {
+                Section Current = this[i];
+                List<Section> CurrentGroup = new List<Section> { Current };
+                GroupLeftNeighbor(i, CurrentGroup, Ungrouped);
+                GroupRightNeighbor(i, CurrentGroup, Ungrouped);
+                SetOfGroups.Add(CurrentGroup);
+            }**/
+            return SetOfGroups;
+        }
+        /// <summary>
+        /// Recursively groups the neighboring edges of a tile based on typing, and places the neighboring tiles into CurrentGroup, and removes them
+        /// from Ungrouped.
+        /// </summary>
+        /// <param name="CurrentEdge">The current edge to check the neighbor of</param>
+        /// <param name="CurrentGroup">The group to add to, if the neighbor is a match</param>
+        /// <param name="Ungrouped">The edges that aren't in a group - used for housekeeping with the driver method</param>
+        private void GroupLeftNeighbor(int CurrentEdge, List<Section> CurrentGroup, List<int> Ungrouped)
+        {
+            int LeftNeighbor = CalculateLeftNeighbor(CurrentEdge);
+            if (this[LeftNeighbor].Typing.Equals(this[CurrentEdge].Typing) && Ungrouped.Contains(LeftNeighbor))
+            {
+                Ungrouped.Remove(LeftNeighbor);
+                CurrentGroup.Add(this[LeftNeighbor]);
+                GroupLeftNeighbor(LeftNeighbor, CurrentGroup, Ungrouped);
+            }
+            else
+            {
+                return;
+            }
+        }
+        /// <summary>
+        /// Calculates the left neighbor of the given index. This is useful for wraparound cases.
+        /// </summary>
+        /// <param name="CurrentEdge">The edge to get the left neighbor of</param>
+        /// <returns>The index of the neighbor</returns>
+        public int CalculateLeftNeighbor(int CurrentEdge)
+        {
+            int LeftNeighbor = (CurrentEdge - 1) % 6;
+            if (LeftNeighbor == 0)
+                LeftNeighbor = 6;
+            return LeftNeighbor;
+        }
+        /// <summary>
+        /// Recursively groups the neighboring edges of a tile based on typing, and places the neighboring tiles into CurrentGroup, and removes them
+        /// from Ungrouped.
+        /// </summary>
+        /// <param name="CurrentEdge">The current edge to check the neighbor of</param>
+        /// <param name="CurrentGroup">The group to add to, if the neighbor is a match</param>
+        /// <param name="Ungrouped">The edges that aren't in a group - used for housekeeping with the driver method</param>
+        private void GroupRightNeighbor(int CurrentEdge, List<Section> CurrentGroup, List<int> Ungrouped)
+        {
+            int RightNeighbor = CalculateRightNeighbor(CurrentEdge);
+            if (this[RightNeighbor].Typing.Equals(this[CurrentEdge].Typing) && Ungrouped.Contains(RightNeighbor))
+            {
+                Ungrouped.Remove(RightNeighbor);
+                CurrentGroup.Add(this[RightNeighbor]);
+                GroupRightNeighbor(RightNeighbor, CurrentGroup, Ungrouped);
+            }
+            else
+            {
+                return;
+            }
+        }
+        /// <summary>
+        /// Calculates the right neighbor of the given index. This is useful for wraparound cases.
+        /// </summary>
+        /// <param name="CurrentEdge">The edge to get the right neighbor of</param>
+        /// <returns>The index of the neighbor</returns>
+        public int CalculateRightNeighbor(int CurrentEdge)
+        {
+            int RightNeighbor = (CurrentEdge + 1) % 6;
+            if (RightNeighbor == 0)
+                RightNeighbor = 6;
+            return RightNeighbor;
         }
     }
 }
