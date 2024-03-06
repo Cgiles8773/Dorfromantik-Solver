@@ -198,12 +198,11 @@ namespace TileTester
         [TestMethod, TestCategory("CalculateNeighbors")]
         public void CalculateRightNeighbors()
         {
-            Tile tile = new Tile();
             int[] neighbor = new int[6];
             for (int i = 0; i < 6; i++)
             {
                 //For the values 1-6, calculate their neighbors and store them in the array
-                neighbor[i] = tile.CalculateRightNeighbor(i+1);
+                neighbor[i] = Tile.CalculateRightNeighbor(i+1);
             }
             Assert.AreEqual(neighbor[0], 2); //1 -> 2
             Assert.AreEqual(neighbor[1], 3); //2 -> 3
@@ -215,12 +214,11 @@ namespace TileTester
         [TestMethod, TestCategory("CalculateNeighbors")]
         public void CalculateLeftNeighbors()
         {
-            Tile tile = new Tile();
             int[] neighbor = new int[6];
             for (int i = 0; i < 6; i++)
             {
                 //For the values 1-6, calculate their neighbors and store them in the array
-                neighbor[i] = tile.CalculateLeftNeighbor(i + 1);
+                neighbor[i] = Tile.CalculateLeftNeighbor(i + 1);
             }
             Assert.AreEqual(neighbor[0], 6); //1 -> 6
             Assert.AreEqual(neighbor[1], 1); //2 -> 1
@@ -271,13 +269,10 @@ namespace TileTester
                 Assert.IsTrue(grouping.Count() == 7);
                 foreach (var section in grouping)
                 {
-                    if (sections.Contains(section))
-                    {
-                        sections.Remove(section);
-                    }
+                    sections.Remove(section);
                 }
             }
-            Assert.IsFalse(sections.Any());
+            Assert.IsTrue(sections.Count == 0);
         }
         [TestMethod, TestCategory("Grouping")]
         public void TestRingGroupTile()
@@ -301,13 +296,10 @@ namespace TileTester
             {
                 foreach (var section in grouping)
                 {
-                    if (sections.Contains(section))
-                    {
-                        sections.Remove(section);
-                    }
+                    sections.Remove(section);
                 }
             }
-            Assert.IsFalse(sections.Any());
+            Assert.IsTrue(sections.Count == 0);
         }
         [TestMethod, TestCategory("Grouping")]
         public void TestHalfGroupTile()
@@ -333,13 +325,10 @@ namespace TileTester
             {
                 foreach (var section in grouping)
                 {
-                    if (sections.Contains(section))
-                    {
-                        sections.Remove(section);
-                    }
+                    sections.Remove(section);
                 }
             }
-            Assert.IsFalse(sections.Any());
+            Assert.IsTrue(sections.Count == 0);
         }
         [TestMethod, TestCategory("Grouping")]
         public void TestMiscGroupTile()
@@ -380,13 +369,10 @@ namespace TileTester
             {
                 foreach (var section in grouping)
                 {
-                    if (sections.Contains(section))
-                    {
-                        sections.Remove(section);
-                    }
+                    sections.Remove(section);
                 }
             }
-            Assert.IsFalse(sections.Any());
+            Assert.IsTrue(sections.Count == 0);
         }
     }
 }

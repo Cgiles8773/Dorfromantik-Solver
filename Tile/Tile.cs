@@ -124,16 +124,16 @@ namespace Solver
         /// <exception cref="IndexOutOfRangeException">If the index is not in the range 1-6</exception>
         public Section GetEdge(int edge)
         {
-            switch (edge)
+            return edge switch
             {
-                case 1: return this.Edge1;
-                case 2: return this.Edge2;
-                case 3: return this.Edge3;
-                case 4: return this.Edge4;
-                case 5: return this.Edge5;
-                case 6: return this.Edge6;
-                default: throw new IndexOutOfRangeException();
-            }
+                1 => this.Edge1,
+                2 => this.Edge2,
+                3 => this.Edge3,
+                4 => this.Edge4,
+                5 => this.Edge5,
+                6 => this.Edge6,
+                _ => throw new IndexOutOfRangeException(),
+            };
         }
         /// <summary>
         /// Returns a list representing this tile object. The list is 7 indexes in length, with the sub-tile being index 0.
@@ -182,9 +182,9 @@ namespace Solver
         {
             List<List<Section>> SetOfGroups = new List<List<Section>>();
             // Captures the subtile grouping of the tile
-            List<Section> SubtileGroup = new List<Section> { Subtile };
+            List<Section> SubtileGroup = [Subtile];
             // Used to keep track of ungrouped/unvisted edges
-            List<int> Ungrouped = new List<int> { 1,2,3,4,5,6 };
+            List<int> Ungrouped = [1,2,3,4,5,6];
             // Do the subtile grouping first to reduce the complexity of the remaining groups.
             for (int i = 1; i <= 6; i++)
             {
@@ -195,12 +195,12 @@ namespace Solver
                 }
             }
             SetOfGroups.Add(SubtileGroup);
-            while (Ungrouped.Any())
+            while (Ungrouped.Count != 0)
             {
                 int i = Ungrouped.ElementAt(0);
                 Ungrouped.Remove(i);
                 Section Current = this[i];
-                List<Section> CurrentGroup = new List<Section> { Current };
+                List<Section> CurrentGroup = [Current];
                 GroupLeftNeighbor(i, CurrentGroup, Ungrouped);
                 GroupRightNeighbor(i, CurrentGroup, Ungrouped);
                 SetOfGroups.Add(CurrentGroup);
@@ -242,7 +242,7 @@ namespace Solver
         /// </summary>
         /// <param name="CurrentEdge">The edge to get the left neighbor of</param>
         /// <returns>The index of the neighbor</returns>
-        public int CalculateLeftNeighbor(int CurrentEdge)
+        public static int CalculateLeftNeighbor(int CurrentEdge)
         {
             int LeftNeighbor = (CurrentEdge - 1) % 6;
             if (LeftNeighbor == 0)
@@ -275,7 +275,7 @@ namespace Solver
         /// </summary>
         /// <param name="CurrentEdge">The edge to get the right neighbor of</param>
         /// <returns>The index of the neighbor</returns>
-        public int CalculateRightNeighbor(int CurrentEdge)
+        public static int CalculateRightNeighbor(int CurrentEdge)
         {
             int RightNeighbor = (CurrentEdge + 1) % 6;
             if (RightNeighbor == 0)
