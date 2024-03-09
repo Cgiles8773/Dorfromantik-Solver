@@ -102,5 +102,20 @@ namespace Solver
         /// <param name="Count"></param>
         public void SetCount(int Count)
         { this.Count = Count; }
+        /// <inheritdoc/>
+        public override bool Equals(object? obj)
+        {
+            if(obj == null) 
+                return false;
+            return this.GetHashCode() == obj.GetHashCode();
+        }
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            int hash = 0;
+            hash += Typing.GetHashCode();
+            hash += Count.GetHashCode();
+            return hash;
+        }
     }
 }

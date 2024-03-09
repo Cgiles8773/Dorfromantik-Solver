@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿// Ignore Spelling: Subtile
+
+using System.Collections;
+using System.Security.Cryptography.X509Certificates;
 
 /// <summary>
 /// Author:    Collin Giles
@@ -36,27 +39,17 @@ namespace Solver
     public class Tile
     {
         /// <summary>
-        /// The following are the edges and sub-tile of the tile
+        /// The array of sections used to organize the information in this tile. Note that the 0th element is the subtile.
         /// </summary>
-        public Section Edge1 { get; private set; }
-        public Section Edge2 { get; private set; }
-        public Section Edge3 { get; private set; }
-        public Section Edge4 { get; private set; }
-        public Section Edge5 { get; private set; }
-        public Section Edge6 { get; private set; }
-        public Section Subtile { get; private set; }
+        private Section[] Sections;
         /// <summary>
         /// Creates a new Tile without any typing, or count
         /// </summary>
         public Tile()
         {
-            Edge1 = new Section();
-            Edge2 = new Section();
-            Edge3 = new Section();
-            Edge4 = new Section();
-            Edge5 = new Section();
-            Edge6 = new Section();
-            Subtile = new Section();
+            Sections = new Section[7];
+            for(int i = 0; i < 7; i++)
+                Sections[i] = new Section();
         }
         /// <summary>
         /// Creates a Tile with a given sub-tile and count.
@@ -65,107 +58,93 @@ namespace Solver
         /// <param name="count">The count of the element</param>
         public Tile(string SubtileType, int count) : this()
         {
-            this.Subtile = new Section(SubtileType, count);
+            Sections[0] = new Section(SubtileType, count);
+        }
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            int hash = 0;
+            foreach (Section s in Sections)
+            {
+                hash += s.Typing.GetHashCode() % 100;
+                hash += s.Count;
+            }
+            return hash;
+        }
+        /// <inheritdoc/>
+        public override bool Equals(object? obj)
+        {
+            if (obj == null)
+                return false;
+            return this.GetHashCode() == obj.GetHashCode();
+            
         }
         /// <summary>
         /// Creates a tile with the given sections. The first index should be the subtile, and then the next six should be sections 1-6.
         /// <requires>The IEnumerable contains no more and no less than seven sections.</requires>
         /// </summary>
-        /// <param name="Sections">The sections to assign to this tile</param>
-        public Tile(IEnumerable<Section> Sections)
+        /// <param name="TileSections">The sections to assign to this tile</param>
+        public Tile(IEnumerable<Section> TileSections) : this()
         {
-            if (Sections.Count() != 7)
+            if (TileSections.Count() != 7)
             { throw new ArgumentException("The required amount of given sections is seven!"); }
             else
             {
-                Subtile = Sections.ElementAt(0);
-                Edge1 = Sections.ElementAt(1);
-                Edge2 = Sections.ElementAt(2);
-                Edge3 = Sections.ElementAt(3);
-                Edge4 = Sections.ElementAt(4);
-                Edge5 = Sections.ElementAt(5);
-                Edge6 = Sections.ElementAt(6);
+                for (int i = 0; i < 7; i++)
+                {
+                    Sections[i] = TileSections.ElementAt(i);
+                }
             }
         }
         /// <summary>
-        /// Sets the edge numbered 1-6, to the type, and sets its elements count to the given count
+        /// Sets the section to the given type and count. Note: Section 0 is the subtile
         /// </summary>
-        /// <param name="edge">The number of the edge</param>
-        /// <param name="type">The type of the edge</param>
+        /// <param name="section">The number of the section</param>
+        /// <param name="type">The type of the section</param>
         /// <param name="count">The count of the element</param>
-        /// <returns>True if the edge was updated successfully</returns>
-        public bool SetEdge(int edge, string type, int count)
+        /// <returns>True if the section was updated successfully</returns>
+        public bool SetEdge(int section, string type, int count)
         {
-            switch (edge)
+            return SetEdge(section, new Section(type, count));
+        }
+        /// <summary>
+        /// Sets the section to the given type and count. Note: Section 0 is the subtile
+        /// </summary>
+        /// <param name="section">The number of the section</param>
+        /// <param name="section">The section to assign to this tile</param>
+        /// <returns>True if the section was updated successfully</returns>
+        public bool SetEdge(int edge, Section section)
+        {
+            if (edge <= 7 && edge >= 0)
             {
-                case 1: this.Edge1 = new Section(type, count); return true;
-                case 2: this.Edge2 = new Section(type, count); return true;
-                case 3: this.Edge3 = new Section(type, count); return true;
-                case 4: this.Edge4 = new Section(type, count); return true;
-                case 5: this.Edge5 = new Section(type, count); return true;
-                case 6: this.Edge6 = new Section(type, count); return true;
-                default: return false;
+                Sections[edge] = section;
+                return true;
             }
+            return false;
         }
         /// <summary>
-        /// Sets the sub-tile type, and the count of elements
+        /// Returns the given section of this tile if it exists. the 0th section of the tile is the subtile, and sections 1-6 are the edge sections
+        /// in clockwise ordering.
         /// </summary>
-        /// <param name="Subtile">The type of the sub-tile</param>
-        /// <param name="count">The count of the element</param>
-        public void SetSubtile(string type, int count)
+        /// <param name="section">The section to get</param>
+        /// <returns>Returns the given section of this tile if it exists</returns>
+        /// <exception cref="IndexOutOfRangeException">If the section isn't between 0 and 7 inclusive</exception>
+        public Section GetSection(int section)
         {
-            Subtile = new Section(type, count);
-        }
-        /// <summary>
-        /// Gets the given edge, if it exists (edges 1-6)
-        /// </summary>
-        /// <param name="edge">The number of the edge to get</param>
-        /// <returns>The edge corresponding to the given number</returns>
-        /// <exception cref="IndexOutOfRangeException">If the index is not in the range 1-6</exception>
-        public Section GetEdge(int edge)
-        {
-            return edge switch
+            if (section <= 7 && section >= 0)
             {
-                1 => this.Edge1,
-                2 => this.Edge2,
-                3 => this.Edge3,
-                4 => this.Edge4,
-                5 => this.Edge5,
-                6 => this.Edge6,
-                _ => throw new IndexOutOfRangeException(),
-            };
+                return Sections[section];
+            }
+            else throw new IndexOutOfRangeException();
         }
         /// <summary>
         /// Returns a list representing this tile object. The list is 7 indexes in length, with the sub-tile being index 0.
         /// Edge1 is index 1, Edge2 is index 2, and so on.
         /// </summary>
         /// <returns>A list containing all sections of this tile</returns>
-        public IEnumerable ToList()
+        public List<Section> ToList()
         {
-            List<Section> Sections =
-            [
-                Subtile,
-                Edge1,
-                Edge2,
-                Edge3,
-                Edge4,
-                Edge5,
-                Edge6,
-            ];
-            return Sections;
-        }
-        /// <summary>
-        /// An access override that allows quick retrieval of an edge in a tile, if the edge exists.
-        /// Note that the edges are indexed 1-6, not 0-5. Refer to the example picture for more info.
-        /// If an edge is retrieved that is outside of these indexes, an IndexOutOfRangeException may be thrown
-        /// </summary>
-        /// <param name="edge">The number of the edge to get</param>
-        /// <returns>The edge corresponding to the given number</returns>
-        /// <exception cref="IndexOutOfRangeException">If the index is not in the range 1-6</exception>
-        public Section this[int edge]
-        {
-            get { return GetEdge(edge); }
-            private set { }
+            return Sections.ToList();
         }
         /// <summary>
         /// Returns a set of groupings, which contains the sections in this tile that are grouped with each other. 
@@ -182,16 +161,16 @@ namespace Solver
         {
             List<List<Section>> SetOfGroups = new List<List<Section>>();
             // Captures the subtile grouping of the tile
-            List<Section> SubtileGroup = [Subtile];
+            List<Section> SubtileGroup = [Sections[0]];
             // Used to keep track of ungrouped/unvisted edges
             List<int> Ungrouped = [1,2,3,4,5,6];
             // Do the subtile grouping first to reduce the complexity of the remaining groups.
             for (int i = 1; i <= 6; i++)
             {
-                if (this[i].Typing.Equals(Subtile.Typing))
+                if (Sections[i].Typing.Equals(Sections[0].Typing))
                 {
                     Ungrouped.Remove(i);
-                    SubtileGroup.Add(this[i]);
+                    SubtileGroup.Add(Sections[i]);
                 }
             }
             SetOfGroups.Add(SubtileGroup);
@@ -199,7 +178,7 @@ namespace Solver
             {
                 int i = Ungrouped.ElementAt(0);
                 Ungrouped.Remove(i);
-                Section Current = this[i];
+                Section Current = Sections[i];
                 List<Section> CurrentGroup = [Current];
                 GroupLeftNeighbor(i, CurrentGroup, Ungrouped);
                 GroupRightNeighbor(i, CurrentGroup, Ungrouped);
@@ -226,10 +205,10 @@ namespace Solver
         private void GroupLeftNeighbor(int CurrentEdge, List<Section> CurrentGroup, List<int> Ungrouped)
         {
             int LeftNeighbor = CalculateLeftNeighbor(CurrentEdge);
-            if (this[LeftNeighbor].Typing.Equals(this[CurrentEdge].Typing) && Ungrouped.Contains(LeftNeighbor))
+            if (Sections[LeftNeighbor].Typing.Equals(Sections[CurrentEdge].Typing) && Ungrouped.Contains(LeftNeighbor))
             {
                 Ungrouped.Remove(LeftNeighbor);
-                CurrentGroup.Add(this[LeftNeighbor]);
+                CurrentGroup.Add(Sections[LeftNeighbor]);
                 GroupLeftNeighbor(LeftNeighbor, CurrentGroup, Ungrouped);
             }
             else
@@ -238,7 +217,7 @@ namespace Solver
             }
         }
         /// <summary>
-        /// Calculates the left neighbor of the given index. This is useful for wraparound cases.
+        /// Calculates the left neighbor of the given edge. This is useful for wraparound cases.
         /// </summary>
         /// <param name="CurrentEdge">The edge to get the left neighbor of</param>
         /// <returns>The index of the neighbor</returns>
@@ -259,10 +238,10 @@ namespace Solver
         private void GroupRightNeighbor(int CurrentEdge, List<Section> CurrentGroup, List<int> Ungrouped)
         {
             int RightNeighbor = CalculateRightNeighbor(CurrentEdge);
-            if (this[RightNeighbor].Typing.Equals(this[CurrentEdge].Typing) && Ungrouped.Contains(RightNeighbor))
+            if (Sections[RightNeighbor].Typing.Equals(Sections[CurrentEdge].Typing) && Ungrouped.Contains(RightNeighbor))
             {
                 Ungrouped.Remove(RightNeighbor);
-                CurrentGroup.Add(this[RightNeighbor]);
+                CurrentGroup.Add(Sections[RightNeighbor]);
                 GroupRightNeighbor(RightNeighbor, CurrentGroup, Ungrouped);
             }
             else
@@ -271,7 +250,7 @@ namespace Solver
             }
         }
         /// <summary>
-        /// Calculates the right neighbor of the given index. This is useful for wraparound cases.
+        /// Calculates the right neighbor of the given edge. This is useful for wraparound cases.
         /// </summary>
         /// <param name="CurrentEdge">The edge to get the right neighbor of</param>
         /// <returns>The index of the neighbor</returns>
@@ -281,6 +260,52 @@ namespace Solver
             if (RightNeighbor == 0)
                 RightNeighbor = 6;
             return RightNeighbor;
+        }
+        /// <summary>
+        /// Rotates the tile clockwise "rotations" amount of times.
+        /// </summary>
+        /// <requires>Rotations cannot be negative!</requires>
+        /// <param name="rotations">Amount of times to rotate</param>
+        /// <exception cref="ArgumentException">If rotations is negative</exception>
+        public void RotateClockwise(int rotations)
+        {
+            Rotate(rotations);
+        }
+        /// <summary>
+        /// Rotates the tile counter clockwise "rotations" amount of times.
+        /// </summary>
+        /// <requires>Rotations cannot be negative!</requires>
+        /// <param name="rotations">Amount of times to rotate</param>
+        /// <exception cref="ArgumentException">If rotations is negative</exception>
+        public void RotateCounterclockwise(int rotations)
+        {
+            Rotate(Math.Abs(rotations - 6) % 6);
+        }
+        /// <summary>
+        /// Rotates the sections in this tile clockwise "rotations" amount of times. 
+        /// </summary>
+        /// <param name="rotations">Amount of times to rotate</param>
+        /// <exception cref="ArgumentException">If rotations is negative</exception>
+        private void Rotate(int rotations) 
+        {
+            if (rotations < 0)
+                throw new ArgumentException();
+            //6 rotations gives us the same hexagon that we started with
+            if (rotations == 0 || rotations % 6 == 0)
+                return;
+
+            Queue<Section> Queue = new Queue<Section>();
+            foreach (Section section in ToList())
+            { Queue.Enqueue(section); }
+            //Ignore Subtile
+            Queue.Dequeue();
+            for (int i = 1; i <= 6; i++)
+            {
+                int EndPosition = (i + rotations) % 6;
+                if(EndPosition == 0)
+                    EndPosition = 6;
+                Sections[EndPosition] = Queue.Dequeue();
+            }
         }
     }
 }
