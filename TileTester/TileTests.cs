@@ -406,7 +406,7 @@ namespace TileTester
             ];
             Tile Tile1 = new Tile(sections);
             Tile Tile2 = new Tile(sections);
-            Tile2.SetEdge(0, "Forest", 10);
+            Tile2.SetSection(0, "Forest", 10);
             Assert.AreNotEqual(Tile1, Tile2);
         }
         [TestMethod, TestCategory("Equality")]
@@ -428,6 +428,22 @@ namespace TileTester
             int HashCode2 = Tile.GetHashCode();
             Assert.AreEqual(HashCode2, HashCode1);
         }
+        [TestMethod, TestCategory("Equality")]
+        public void TestEqualsNull()
+        {
+            List<Section> sections =
+            [
+                new Section("Plain",0),
+                new Section("Plain",1),
+                new Section("Plain",2),
+                new Section("Plain",3),
+                new Section("Plain",4),
+                new Section("Plain",5),
+                new Section("Plain",6),
+            ];
+            Tile Tile = new Tile(sections);
+            Assert.IsFalse(Tile.Equals(null));
+        }
         [TestMethod, TestCategory("Rotate")]
         public void Test1RotateClockwise()
         {
@@ -444,8 +460,6 @@ namespace TileTester
             Tile Tile = new Tile(sections);
             Tile.RotateClockwise(1);
             List<Section> Sections = Tile.ToList();
-            Sections.ElementAt(0).GetHashCode();
-            new Section("Plain", 0).GetHashCode();
             Assert.AreEqual(Sections.ElementAt(0), new Section("Plain", 0));
             Assert.AreEqual(Sections.ElementAt(2), new Section("Plain", 1));
             Assert.AreEqual(Sections.ElementAt(3), new Section("Plain", 2));
@@ -470,8 +484,6 @@ namespace TileTester
             Tile Tile = new Tile(sections);
             Tile.RotateClockwise(2);
             List<Section> Sections = Tile.ToList();
-            Sections.ElementAt(0).GetHashCode();
-            new Section("Plain", 0).GetHashCode();
             Assert.AreEqual(Sections.ElementAt(0), new Section("Plain", 0));
             Assert.AreEqual(Sections.ElementAt(3), new Section("Plain", 1));
             Assert.AreEqual(Sections.ElementAt(4), new Section("Plain", 2));
@@ -496,8 +508,6 @@ namespace TileTester
             Tile Tile = new Tile(sections);
             Tile.RotateClockwise(3);
             List<Section> Sections = Tile.ToList();
-            Sections.ElementAt(0).GetHashCode();
-            new Section("Plain", 0).GetHashCode();
             Assert.AreEqual(Sections.ElementAt(0), new Section("Plain", 0));
             Assert.AreEqual(Sections.ElementAt(4), new Section("Plain", 1));
             Assert.AreEqual(Sections.ElementAt(5), new Section("Plain", 2));
@@ -522,8 +532,6 @@ namespace TileTester
             Tile Tile = new Tile(sections);
             Tile.RotateClockwise(4);
             List<Section> Sections = Tile.ToList();
-            Sections.ElementAt(0).GetHashCode();
-            new Section("Plain", 0).GetHashCode();
             Assert.AreEqual(Sections.ElementAt(0), new Section("Plain", 0));
             Assert.AreEqual(Sections.ElementAt(5), new Section("Plain", 1));
             Assert.AreEqual(Sections.ElementAt(6), new Section("Plain", 2));
@@ -548,8 +556,6 @@ namespace TileTester
             Tile Tile = new Tile(sections);
             Tile.RotateClockwise(5);
             List<Section> Sections = Tile.ToList();
-            Sections.ElementAt(0).GetHashCode();
-            new Section("Plain", 0).GetHashCode();
             Assert.AreEqual(Sections.ElementAt(0), new Section("Plain", 0));
             Assert.AreEqual(Sections.ElementAt(6), new Section("Plain", 1));
             Assert.AreEqual(Sections.ElementAt(1), new Section("Plain", 2));
@@ -574,8 +580,6 @@ namespace TileTester
             Tile Tile = new Tile(sections);
             Tile.RotateClockwise(6);
             List<Section> Sections = Tile.ToList();
-            Sections.ElementAt(0).GetHashCode();
-            new Section("Plain", 0).GetHashCode();
             Assert.AreEqual(Sections.ElementAt(0), new Section("Plain", 0));
             Assert.AreEqual(Sections.ElementAt(1), new Section("Plain", 1));
             Assert.AreEqual(Sections.ElementAt(2), new Section("Plain", 2));
@@ -600,8 +604,6 @@ namespace TileTester
             Tile Tile = new Tile(sections);
             Tile.RotateClockwise(0);
             List<Section> Sections = Tile.ToList();
-            Sections.ElementAt(0).GetHashCode();
-            new Section("Plain", 0).GetHashCode();
             Assert.AreEqual(Sections.ElementAt(0), new Section("Plain", 0));
             Assert.AreEqual(Sections.ElementAt(1), new Section("Plain", 1));
             Assert.AreEqual(Sections.ElementAt(2), new Section("Plain", 2));
@@ -626,8 +628,6 @@ namespace TileTester
             Tile Tile = new Tile(sections);
             Tile.RotateClockwise(8);
             List<Section> Sections = Tile.ToList();
-            Sections.ElementAt(0).GetHashCode();
-            new Section("Plain", 0).GetHashCode();
             Assert.AreEqual(Sections.ElementAt(0), new Section("Plain", 0));
             Assert.AreEqual(Sections.ElementAt(3), new Section("Plain", 1));
             Assert.AreEqual(Sections.ElementAt(4), new Section("Plain", 2));
@@ -635,6 +635,250 @@ namespace TileTester
             Assert.AreEqual(Sections.ElementAt(6), new Section("Plain", 4));
             Assert.AreEqual(Sections.ElementAt(1), new Section("Plain", 5));
             Assert.AreEqual(Sections.ElementAt(2), new Section("Plain", 6));
+        }
+        [TestMethod, TestCategory("Rotate")]
+        public void Test1RotateCounterClockwise()
+        {
+            List<Section> sections =
+            [
+                new Section("Plain",0),
+                new Section("Plain",1),
+                new Section("Plain",2),
+                new Section("Plain",3),
+                new Section("Plain",4),
+                new Section("Plain",5),
+                new Section("Plain",6),
+            ];
+            Tile Tile = new Tile(sections);
+            Tile.RotateCounterclockwise(1);
+            List<Section> Sections = Tile.ToList();
+            Assert.AreEqual(Sections.ElementAt(0), new Section("Plain", 0));
+            Assert.AreEqual(Sections.ElementAt(6), new Section("Plain", 1));
+            Assert.AreEqual(Sections.ElementAt(1), new Section("Plain", 2));
+            Assert.AreEqual(Sections.ElementAt(2), new Section("Plain", 3));
+            Assert.AreEqual(Sections.ElementAt(3), new Section("Plain", 4));
+            Assert.AreEqual(Sections.ElementAt(4), new Section("Plain", 5));
+            Assert.AreEqual(Sections.ElementAt(5), new Section("Plain", 6));
+        }
+        [TestMethod, TestCategory("Rotate")]
+        public void Test2RotateCounterClockwise()
+        {
+            List<Section> sections =
+            [
+                new Section("Plain",0),
+                new Section("Plain",1),
+                new Section("Plain",2),
+                new Section("Plain",3),
+                new Section("Plain",4),
+                new Section("Plain",5),
+                new Section("Plain",6),
+            ];
+            Tile Tile = new Tile(sections);
+            Tile.RotateCounterclockwise(2);
+            List<Section> Sections = Tile.ToList();
+            Assert.AreEqual(Sections.ElementAt(0), new Section("Plain", 0));
+            Assert.AreEqual(Sections.ElementAt(5), new Section("Plain", 1));
+            Assert.AreEqual(Sections.ElementAt(6), new Section("Plain", 2));
+            Assert.AreEqual(Sections.ElementAt(1), new Section("Plain", 3));
+            Assert.AreEqual(Sections.ElementAt(2), new Section("Plain", 4));
+            Assert.AreEqual(Sections.ElementAt(3), new Section("Plain", 5));
+            Assert.AreEqual(Sections.ElementAt(4), new Section("Plain", 6));
+        }
+        [TestMethod, TestCategory("Rotate")]
+        public void Test3RotateCounterClockwise()
+        {
+            List<Section> sections =
+            [
+                new Section("Plain",0),
+                new Section("Plain",1),
+                new Section("Plain",2),
+                new Section("Plain",3),
+                new Section("Plain",4),
+                new Section("Plain",5),
+                new Section("Plain",6),
+            ];
+            Tile Tile = new Tile(sections);
+            Tile.RotateCounterclockwise(3);
+            List<Section> Sections = Tile.ToList();
+            Assert.AreEqual(Sections.ElementAt(0), new Section("Plain", 0));
+            Assert.AreEqual(Sections.ElementAt(4), new Section("Plain", 1));
+            Assert.AreEqual(Sections.ElementAt(5), new Section("Plain", 2));
+            Assert.AreEqual(Sections.ElementAt(6), new Section("Plain", 3));
+            Assert.AreEqual(Sections.ElementAt(1), new Section("Plain", 4));
+            Assert.AreEqual(Sections.ElementAt(2), new Section("Plain", 5));
+            Assert.AreEqual(Sections.ElementAt(3), new Section("Plain", 6));
+        }
+        [TestMethod, TestCategory("Rotate")]
+        public void Test4RotateCounterClockwise()
+        {
+            List<Section> sections =
+            [
+                new Section("Plain",0),
+                new Section("Plain",1),
+                new Section("Plain",2),
+                new Section("Plain",3),
+                new Section("Plain",4),
+                new Section("Plain",5),
+                new Section("Plain",6),
+            ];
+            Tile Tile = new Tile(sections);
+            Tile.RotateCounterclockwise(4);
+            List<Section> Sections = Tile.ToList();
+            Assert.AreEqual(Sections.ElementAt(0), new Section("Plain", 0));
+            Assert.AreEqual(Sections.ElementAt(3), new Section("Plain", 1));
+            Assert.AreEqual(Sections.ElementAt(4), new Section("Plain", 2));
+            Assert.AreEqual(Sections.ElementAt(5), new Section("Plain", 3));
+            Assert.AreEqual(Sections.ElementAt(6), new Section("Plain", 4));
+            Assert.AreEqual(Sections.ElementAt(1), new Section("Plain", 5));
+            Assert.AreEqual(Sections.ElementAt(2), new Section("Plain", 6));
+        }
+        [TestMethod, TestCategory("Rotate")]
+        public void Test5RotateCounterClockwise()
+        {
+            List<Section> sections =
+            [
+                new Section("Plain",0),
+                new Section("Plain",1),
+                new Section("Plain",2),
+                new Section("Plain",3),
+                new Section("Plain",4),
+                new Section("Plain",5),
+                new Section("Plain",6),
+            ];
+            Tile Tile = new Tile(sections);
+            Tile.RotateCounterclockwise(5);
+            List<Section> Sections = Tile.ToList();
+            Assert.AreEqual(Sections.ElementAt(0), new Section("Plain", 0));
+            Assert.AreEqual(Sections.ElementAt(2), new Section("Plain", 1));
+            Assert.AreEqual(Sections.ElementAt(3), new Section("Plain", 2));
+            Assert.AreEqual(Sections.ElementAt(4), new Section("Plain", 3));
+            Assert.AreEqual(Sections.ElementAt(5), new Section("Plain", 4));
+            Assert.AreEqual(Sections.ElementAt(6), new Section("Plain", 5));
+            Assert.AreEqual(Sections.ElementAt(1), new Section("Plain", 6));
+        }
+        [TestMethod, TestCategory("Rotate")]
+        public void Test6RotateCounterClockwise()
+        {
+            List<Section> sections =
+            [
+                new Section("Plain",0),
+                new Section("Plain",1),
+                new Section("Plain",2),
+                new Section("Plain",3),
+                new Section("Plain",4),
+                new Section("Plain",5),
+                new Section("Plain",6),
+            ];
+            Tile Tile = new Tile(sections);
+            Tile.RotateCounterclockwise(6);
+            List<Section> Sections = Tile.ToList();
+            Assert.AreEqual(Sections.ElementAt(0), new Section("Plain", 0));
+            Assert.AreEqual(Sections.ElementAt(1), new Section("Plain", 1));
+            Assert.AreEqual(Sections.ElementAt(2), new Section("Plain", 2));
+            Assert.AreEqual(Sections.ElementAt(3), new Section("Plain", 3));
+            Assert.AreEqual(Sections.ElementAt(4), new Section("Plain", 4));
+            Assert.AreEqual(Sections.ElementAt(5), new Section("Plain", 5));
+            Assert.AreEqual(Sections.ElementAt(6), new Section("Plain", 6));
+        }
+        [TestMethod, TestCategory("Rotate")]
+        public void Test0RotateCounterClockwise()
+        {
+            List<Section> sections =
+            [
+                new Section("Plain",0),
+                new Section("Plain",1),
+                new Section("Plain",2),
+                new Section("Plain",3),
+                new Section("Plain",4),
+                new Section("Plain",5),
+                new Section("Plain",6),
+            ];
+            Tile Tile = new Tile(sections);
+            Tile.RotateCounterclockwise(0);
+            List<Section> Sections = Tile.ToList();
+            Assert.AreEqual(Sections.ElementAt(0), new Section("Plain", 0));
+            Assert.AreEqual(Sections.ElementAt(1), new Section("Plain", 1));
+            Assert.AreEqual(Sections.ElementAt(2), new Section("Plain", 2));
+            Assert.AreEqual(Sections.ElementAt(3), new Section("Plain", 3));
+            Assert.AreEqual(Sections.ElementAt(4), new Section("Plain", 4));
+            Assert.AreEqual(Sections.ElementAt(5), new Section("Plain", 5));
+            Assert.AreEqual(Sections.ElementAt(6), new Section("Plain", 6));
+        }
+        [TestMethod, TestCategory("Rotate")]
+        public void Test8RotateCounterClockwise()
+        {
+            List<Section> sections =
+            [
+                new Section("Plain",0),
+                new Section("Plain",1),
+                new Section("Plain",2),
+                new Section("Plain",3),
+                new Section("Plain",4),
+                new Section("Plain",5),
+                new Section("Plain",6),
+            ];
+            Tile Tile = new Tile(sections);
+            Tile.RotateCounterclockwise(8);
+            List<Section> Sections = Tile.ToList();
+            Assert.AreEqual(Sections.ElementAt(0), new Section("Plain", 0));
+            Assert.AreEqual(Sections.ElementAt(5), new Section("Plain", 1));
+            Assert.AreEqual(Sections.ElementAt(6), new Section("Plain", 2));
+            Assert.AreEqual(Sections.ElementAt(1), new Section("Plain", 3));
+            Assert.AreEqual(Sections.ElementAt(2), new Section("Plain", 4));
+            Assert.AreEqual(Sections.ElementAt(3), new Section("Plain", 5));
+            Assert.AreEqual(Sections.ElementAt(4), new Section("Plain", 6));
+        }
+        [TestMethod, TestCategory("Rotate")]
+        public void TestRotateThrows()
+        {
+            List<Section> sections =
+            [
+                new Section("Plain",0),
+                new Section("Plain",1),
+                new Section("Plain",2),
+                new Section("Plain",3),
+                new Section("Plain",4),
+                new Section("Plain",5),
+                new Section("Plain",6),
+            ];
+            Tile Tile = new Tile(sections);
+            Assert.ThrowsException<ArgumentException>(() => Tile.RotateClockwise(-1));
+            Assert.ThrowsException<ArgumentException>(() => Tile.RotateCounterclockwise(-1));
+        }
+        [TestMethod, TestCategory("SetSection")]
+        public void TestSetSectionOutOfBounds()
+        {
+            List<Section> sections =
+            [
+                new Section("Plain",0),
+                new Section("Plain",1),
+                new Section("Plain",2),
+                new Section("Plain",3),
+                new Section("Plain",4),
+                new Section("Plain",5),
+                new Section("Plain",6),
+            ];
+            Tile Tile = new Tile(sections);
+            Assert.IsFalse(Tile.SetSection(10, "Forest", 1));
+            Assert.IsFalse(Tile.SetSection(-10, "Forest", 1));
+
+        }
+        [TestMethod, TestCategory("GetSection")]
+        public void TestGetSectionOutOfBounds()
+        {
+            List<Section> sections =
+            [
+                new Section("Plain",0),
+                new Section("Plain",1),
+                new Section("Plain",2),
+                new Section("Plain",3),
+                new Section("Plain",4),
+                new Section("Plain",5),
+                new Section("Plain",6),
+            ];
+            Tile Tile = new Tile(sections);
+            Assert.ThrowsException<IndexOutOfRangeException>(() => Tile.GetSection(-10));
+            Assert.ThrowsException<IndexOutOfRangeException>(() => Tile.GetSection(10));
         }
     }
 }

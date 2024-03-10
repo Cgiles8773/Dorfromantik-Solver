@@ -103,9 +103,9 @@ namespace Solver
         /// <param name="type">The type of the section</param>
         /// <param name="count">The count of the element</param>
         /// <returns>True if the section was updated successfully</returns>
-        public bool SetEdge(int section, string type, int count)
+        public bool SetSection(int section, string type, int count)
         {
-            return SetEdge(section, new Section(type, count));
+            return SetSection(section, new Section(type, count));
         }
         /// <summary>
         /// Sets the section to the given type and count. Note: Section 0 is the subtile
@@ -113,7 +113,7 @@ namespace Solver
         /// <param name="section">The number of the section</param>
         /// <param name="section">The section to assign to this tile</param>
         /// <returns>True if the section was updated successfully</returns>
-        public bool SetEdge(int edge, Section section)
+        public bool SetSection(int edge, Section section)
         {
             if (edge <= 7 && edge >= 0)
             {
@@ -269,6 +269,8 @@ namespace Solver
         /// <exception cref="ArgumentException">If rotations is negative</exception>
         public void RotateClockwise(int rotations)
         {
+            if (rotations < 0)
+                throw new ArgumentException();
             Rotate(rotations);
         }
         /// <summary>
@@ -279,17 +281,18 @@ namespace Solver
         /// <exception cref="ArgumentException">If rotations is negative</exception>
         public void RotateCounterclockwise(int rotations)
         {
-            Rotate(Math.Abs(rotations - 6) % 6);
+            if (rotations < 0)
+                throw new ArgumentException();
+            Rotate(Math.Abs(rotations % 6 - 6) % 6);
         }
         /// <summary>
         /// Rotates the sections in this tile clockwise "rotations" amount of times. 
         /// </summary>
+        /// <requires>The rotations is not a negative number - This has unplanned behavior</requires>
         /// <param name="rotations">Amount of times to rotate</param>
         /// <exception cref="ArgumentException">If rotations is negative</exception>
         private void Rotate(int rotations) 
         {
-            if (rotations < 0)
-                throw new ArgumentException();
             //6 rotations gives us the same hexagon that we started with
             if (rotations == 0 || rotations % 6 == 0)
                 return;
